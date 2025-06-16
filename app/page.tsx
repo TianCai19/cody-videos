@@ -271,6 +271,50 @@ export default function Home() {
     setVideoToEdit(null);
   };
 
+  const handleExportData = () => {
+    const data = {
+      categories,
+      videos,
+      version: '1.0',
+      exportDate: new Date().toISOString(),
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `my-growth-video-library-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        if (data.categories && data.videos) {
+          setCategories(data.categories);
+          setVideos(data.videos);
+          saveAllDataToStorage(data.categories, data.videos);
+          alert('数据导入成功！');
+        } else {
+          alert('无效的数据格式！');
+        }
+      } catch (error) {
+        alert('导入失败：无效的 JSON 文件！');
+      }
+    };
+    reader.readAsText(file);
+    // 重置 input 值，这样同一个文件可以重复导入
+    event.target.value = '';
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-900 text-gray-100">
       <header className="bg-gray-800 p-4 shadow-lg sticky top-0 z-40">
@@ -289,6 +333,23 @@ export default function Home() {
             >
               主页
             </a>
+            <div className="flex gap-2">
+              <button
+                onClick={handleExportData}
+                className="text-gray-300 hover:text-teal-300 transition flex items-center gap-1"
+              >
+                <span>导出数据</span>
+              </button>
+              <label className="text-gray-300 hover:text-teal-300 transition flex items-center gap-1 cursor-pointer">
+                <span>导入数据</span>
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleImportData}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </nav>
         </div>
       </header>

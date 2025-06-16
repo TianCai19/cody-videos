@@ -194,7 +194,7 @@ export default function Home() {
 
   const showCategoryDetail = (categoryId: string | null) => {
     if (!categoryId) return;
-    setPreviousView({ name: currentView, param: null });
+    setPreviousView({ name: currentView, param: categoryId });
     setCurrentView('category-detail');
   };
 

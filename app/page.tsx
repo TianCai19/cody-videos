@@ -121,9 +121,7 @@ export default function Home() {
       title: finalTitle,
       description: descEl.value.trim() || '自定义视频描述。',
       duration: '未知',
-      thumbnail: `https://placehold.co/600x338/5a67d8/ffffff?text=${encodeURIComponent(
-        finalTitle
-      )}`,
+      thumbnail: `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(finalTitle)}&backgroundColor=5a67d8&textColor=ffffff&size=600&width=600&height=338`,
       videoUrl,
       type: videoType,
       isUserAdded: true,
@@ -263,9 +261,7 @@ export default function Home() {
             ...v,
             title,
             description,
-            thumbnail: `https://placehold.co/600x338/5a67d8/ffffff?text=${encodeURIComponent(
-              title
-            )}`,
+            thumbnail: `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(title)}&backgroundColor=5a67d8&textColor=ffffff&size=600&width=600&height=338`,
           }
         : v
     );

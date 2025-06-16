@@ -6,6 +6,10 @@ node_modules/
 # Testing
 /coverage
 
+# Next.js
+/.next/
+/out/
+
 # Production
 /build
 /dist
@@ -16,6 +20,7 @@ node_modules/
 .env.development.local
 .env.test.local
 .env.production.local
+*.pem
 
 # Debug logs
 npm-debug.log*
@@ -26,4 +31,11 @@ yarn-error.log*
 .idea/
 .vscode/
 *.swp
-*.swo 
+*.swo
+
+# Vercel
+.vercel
+
+# Typescript
+*.tsbuildinfo
+next-env.d.ts 

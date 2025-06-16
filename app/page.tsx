@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { VideoCard } from './components/VideoCard';
 import { CategoryCard } from './components/CategoryCard';
 import { DeleteModal } from './components/DeleteModal';
+import { EditModal } from './components/EditModal';
 import { Video, Category, PreviousView } from './types';
 
 const initialCategories: Category[] = [
@@ -42,6 +43,8 @@ export default function Home() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
   const [currentPlayingVideo, setCurrentPlayingVideo] = useState<Video | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [videoToEdit, setVideoToEdit] = useState<Video | null>(null);
 
   useEffect(() => {
     loadDataFromStorage();
@@ -246,6 +249,32 @@ export default function Home() {
     }
   };
 
+  const handleEditVideo = (video: Video) => {
+    setVideoToEdit(video);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (title: string, description: string) => {
+    if (!videoToEdit) return;
+
+    const newVideos = videos.map((v) =>
+      v.id === videoToEdit.id
+        ? {
+            ...v,
+            title,
+            description,
+            thumbnail: `https://placehold.co/600x338/5a67d8/ffffff?text=${encodeURIComponent(
+              title
+            )}`,
+          }
+        : v
+    );
+
+    setVideos(newVideos);
+    saveAllDataToStorage(categories, newVideos);
+    setVideoToEdit(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-900 text-gray-100">
       <header className="bg-gray-800 p-4 shadow-lg sticky top-0 z-40">
@@ -387,6 +416,7 @@ export default function Home() {
                       video={video}
                       onPlay={showVideoPlay}
                       onDelete={handleDeleteVideo}
+                      onEdit={handleEditVideo}
                     />
                   ))}
               </div>
@@ -405,6 +435,7 @@ export default function Home() {
                       video={video}
                       onPlay={showVideoPlay}
                       onDelete={handleDeleteVideo}
+                      onEdit={handleEditVideo}
                       isDraggable={true}
                     />
                   ))}
@@ -433,6 +464,7 @@ export default function Home() {
                     video={video}
                     onPlay={showVideoPlay}
                     onDelete={handleDeleteVideo}
+                    onEdit={handleEditVideo}
                   />
                 ))}
             </div>
@@ -486,6 +518,17 @@ export default function Home() {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDeleteVideo}
+      />
+
+      <EditModal
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setVideoToEdit(null);
+        }}
+        onSave={handleSaveEdit}
+        initialTitle={videoToEdit?.title || ''}
+        initialDescription={videoToEdit?.description || ''}
       />
     </div>
   );
